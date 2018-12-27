@@ -1,0 +1,46 @@
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Install the Apache web server
+      yum: name=httpd state=present
+    - name: Ensure that Apache is started and enabled on system boot
+      service: name=httpd state=started enabled=yes
+    - name: Add EPEL repository
+      yum_repository:
+        name: epel
+        description: EPEL YUM repo 
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    - name: Add public key of EPEL 
+      rpm_key:
+        state: present
+        key: https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+    - name: Add Webtatic repository
+      yum:
+        name: https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+        state: present
+    - name: Install PHP 7 and some required packages
+        yum:
+          name: 
+            - mod_php71w
+            - php71w-cli
+            - php71w-common
+            - php71w-gd
+            - php71w-mbstring
+            - php71w-mcrypt
+            - php71w-mysqlnd
+            - php71w-xml
+            - unzip
+            - vim
+            - mariadb
+          state: present
+    - name: Download and extract the CodeIgniter archive to /var/www/html
+      unarchive:
+        src: https://github.com/bcit-ci/CodeIgniter/archive/3.1.5.zip 
+        dest: /var/www/html 
+        remote_src: yes
+    - name: Change the files ownership to be owned by vagrant 
+      file:
+        path: /var/www/html
+        owner: vagrant
+        group: vagrant
+        recurce: yes

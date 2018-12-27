@@ -1,4 +1,4 @@
-- hosts: databases
+- hosts: all
   become: yes
   tasks:
     - name: Ensure that MariaDB is installed
@@ -19,4 +19,20 @@
         dest: /root/.my.cnf
         owner: root
         mode: 0600
+    - name: Remove anonymous accounts
+      mysql_user: 
+         name: ''
+         host_all: yes
+         state: absent
+    - name: Create application database 
+      mysql_db:
+        name: ci_database
+        state: present
+    - name: Create an application user   
+      mysql_user:
+        name: ci_user
+        password: cipassword
+        host: '%'
+        priv: ci_database.*:ALL
+        state: present
 

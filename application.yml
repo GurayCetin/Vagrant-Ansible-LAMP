@@ -1,5 +1,8 @@
 - hosts: webservers
   become: yes
+  handlers: 
+    - name: restart Apache
+      service: name=httpd state=restarted
   tasks:
     - name: Install the Apache web server
       yum: name=httpd state=present
@@ -44,3 +47,33 @@
         owner: vagrant
         group: vagrant
         recurce: yes
+    - name: Change the web home directory to point at /var/www/html/CodeIgniter-3.1.5
+      lineinline: 
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^.*DocumentRoot "/var/www/html".*$'
+        line: DocumentRoot "var/www/html/CodeIgniter-3.1.5"
+        state: present
+      notify:
+        - restart Apache
+    - name: Ensure that mod_rewrite is enabled in Apache
+      lineinline: 
+        path: /etc/httpd/conf.modules.d/00-base.conf
+        regexp: '^.*rewrite_module.*$'
+        line: 'LoadModule rewrite_module modules/mod_rewrite.so'
+        state: present
+    - name: Copy htaccess to CodeIgniter
+      copy: 
+        src: htaccess
+        dest: /var/www/html/CodeIgniter-3.1.5/.htaccess
+        owner: vagrant
+        group: vagrant
+    - name: Allow .htaccess file to be used
+      lineinline: 
+        path: /etc/httpd/conf/httpd.conf
+        insertafter: '</Directory>'
+        line: |
+          <Directory "/var/www/html/CodeIgniter-3.1.5">
+            AllowOverride all
+          </Directory>
+      notify:
+        - restart Apache

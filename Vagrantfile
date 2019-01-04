@@ -81,7 +81,7 @@ Vagrant.configure("2") do |config|
     web.vm.network "private_network", ip:"192.168.33.20"
     web.vm.network "forwarded_port", guest: 80, host: 8080
     web.vm.provision "ansible" do |ansible|
-      ansible.playbook = "applicaton.yml"
+      ansible.playbook = "application.yml"
     end
   end
   config.vm.define "db" do |db|

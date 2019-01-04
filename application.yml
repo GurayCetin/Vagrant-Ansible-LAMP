@@ -22,20 +22,20 @@
         name: https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
         state: present
     - name: Install PHP 7 and some required packages
-        yum:
-          name: 
-            - mod_php71w
-            - php71w-cli
-            - php71w-common
-            - php71w-gd
-            - php71w-mbstring
-            - php71w-mcrypt
-            - php71w-mysqlnd
-            - php71w-xml
-            - unzip
-            - vim
-            - mariadb
-          state: present
+      yum:
+        name: 
+          - mod_php71w
+          - php71w-cli
+          - php71w-common
+          - php71w-gd
+          - php71w-mbstring
+          - php71w-mcrypt
+          - php71w-mysqlnd
+          - php71w-xml
+          - unzip
+          - vim
+          - mariadb
+      state: present
     - name: Download and extract the CodeIgniter archive to /var/www/html
       unarchive:
         src: https://github.com/bcit-ci/CodeIgniter/archive/3.1.5.zip 
